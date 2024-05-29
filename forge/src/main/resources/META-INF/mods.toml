@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[48,)"
+#issueTrackerURL = ""
+license = "LGPLv3"
+
+[[mods]]
+modId = "fogoverrides"
+version = "${version}"
+displayName = "Fog Overrides"
+authors = "fabbe50"
+description = '''
+Mod to make fog do what you want.
+'''
+#logoFile = ""
+
+[[dependencies.fogoverrides]]
+modId = "forge"
+mandatory = true
+versionRange = "[48,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fogoverrides]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fogoverrides]]
+modId = "architectury"
+mandatory = true
+versionRange = "[10.1.17,)"
+ordering = "AFTER"
+side = "BOTH"

@@ -1,0 +1,33 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+#issueTrackerURL = ""
+license = "LGPLv3"
+
+[[mods]]
+modId = "fogoverrides"
+version = "${version}"
+displayName = "Fog Overrides"
+authors = "fabbe50"
+description = '''
+Mod to make fog do what you want.
+'''
+#logoFile = ""
+
+[[mixins]]
+config = "fogoverrides.mixins.json"
+[[mixins]]
+config = "fogoverrides-common.mixins.json"
+
+[[dependencies.fogoverrides]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[20.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fogoverrides]]
+modId = "architectury"
+mandatory = true
+versionRange = "[10.1.17,)"
+ordering = "AFTER"
+side = "BOTH"
