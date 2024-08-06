@@ -46,10 +46,12 @@ public abstract class MixinScreenEffectRenderer {
         Player player = minecraft.player;
         if (player != null) {
             if (!player.noPhysics) {
-                BlockState blockState = getViewBlockingState(player);
-                if (blockState != null) {
-                    renderTex(minecraft.getBlockRenderer().getBlockModelShaper().getParticleIcon(blockState), poseStack);
-                }
+                try {
+                    BlockState blockState = getViewBlockingState(player);
+                    if (blockState != null) {
+                        renderTex(minecraft.getBlockRenderer().getBlockModelShaper().getParticleIcon(blockState), poseStack);
+                    }
+                } catch (NullPointerException ignored) {/* This catch is here cause Forge is a pain... */}
             }
             if (!player.isSpectator()) {
                 if (player.isEyeInFluid(FluidTags.WATER) && dataStorage.isRenderWaterOverlay()) {

@@ -14,10 +14,10 @@ public class FogOverrides {
 
     public static void init() {
         NetworkHandler.registerServerHandshake();
+        ModConfig.register();
     }
 
     public static void clientInit() {
-        ModConfig.register();
         NetworkHandler.registerHandlers();
         NetworkHandler.registerClientHandshake();
         ClientGuiEvent.DEBUG_TEXT_LEFT.register(strings -> {
@@ -27,6 +27,7 @@ public class FogOverrides {
             strings.add("Fog Overrides: " +
                     (fogData.isOverrideGameFog() ? "Biome" : (dimensionData.isOverrideGameFog() ? "Dimension" : "Vanilla")) +
                     (dataStorage.isOnFogOverridesEnabledServer() ? " (" + (dataStorage.isIntegratedServer() ? "Integrated " : "") + "Server)" : " (Client)"));
+            strings.add("Location: {" + ("Dimension: " + Utilities.getCurrentDimensionLocation()) + "}, {Biome: " + Utilities.getCurrentBiomeLocation() + "}");
             strings.add("Fog Data: " +
                     "{Near: " + currentFogData.start + "}, " +
                     "{Far: " + currentFogData.end + "}, " +

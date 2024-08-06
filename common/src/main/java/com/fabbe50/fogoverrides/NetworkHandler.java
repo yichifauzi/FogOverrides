@@ -89,11 +89,11 @@ public class NetworkHandler {
                 fogData.setLavaPotionEffect(lavaPotionEffect);
                 fogData.setLavaPotionNearDistance(dataVariables[12]);
                 fogData.setLavaPotionFarDistance(dataVariables[13]);
-                if (location.equals(Utilities.OVERWORLD)) {
+                if (location.equals(Utilities.getOverworld())) {
                     CurrentDataStorage.INSTANCE.updateOverworldFogData(fogData);
-                } else if (location.equals(Utilities.THE_NETHER)) {
+                } else if (location.equals(Utilities.getNether())) {
                     CurrentDataStorage.INSTANCE.updateNetherFogData(fogData);
-                } else if (location.equals(Utilities.THE_END)) {
+                } else if (location.equals(Utilities.getTheEnd())) {
                     CurrentDataStorage.INSTANCE.updateTheEndFogData(fogData);
                 }
             }
@@ -124,6 +124,7 @@ public class NetworkHandler {
                 fogData.setLavaPotionNearDistance(dataVariables[12]);
                 fogData.setLavaPotionFarDistance(dataVariables[13]);
                 CurrentDataStorage.INSTANCE.addToBiomeStorage(location, fogData);
+                CurrentDataStorage.INSTANCE.refreshWaterColor(location, fogData);
             }
         });
     }
@@ -154,7 +155,7 @@ public class NetworkHandler {
                 NetworkManager.sendToPlayer((ServerPlayer) context.getPlayer(), MOD_HANDSHAKE, buf);
                 NetworkManager.sendToPlayer((ServerPlayer) context.getPlayer(), SPECTATOR_FOG_PACKET, getSpectatorSettingsBuffer());
                 NetworkManager.sendToPlayer((ServerPlayer) context.getPlayer(), CREATIVE_FOG_PACKET, getCreativeSettingsBuffer());
-                ResourceLocation[] dimensionLocations = new ResourceLocation[] {Utilities.OVERWORLD, Utilities.THE_NETHER, Utilities.THE_END};
+                ResourceLocation[] dimensionLocations = new ResourceLocation[] {Utilities.getOverworld(), Utilities.getNether(), Utilities.getTheEnd()};
                 for (ResourceLocation location : dimensionLocations) {
                     NetworkManager.sendToPlayer((ServerPlayer) context.getPlayer(), DIMENSION_FOG_PACKET, getDimensionBuffer(location));
                 }

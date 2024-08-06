@@ -39,7 +39,6 @@ public abstract class MixinFogRenderer {
 
     @Inject(at = @At(value = "HEAD"), method = "setupFog", cancellable = true)
     private static void injectSetupFog(Camera camera, FogRenderer.FogMode fogMode, float renderDistance, boolean isSpecialFog, float smoothingVar, CallbackInfo ci) {
-        // TODO: Write the fog setup based on FogRenderer.setupFog();
         CurrentDataStorage settings = CurrentDataStorage.INSTANCE;
         FogType fogType = camera.getFluidInCamera();
         Entity entity = camera.getEntity();

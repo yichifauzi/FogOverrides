@@ -11,8 +11,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 public class FogOverridesForgeClient {
     public static void initClient() {
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> FogOverrides::clientInit);
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> FogOverridesForgeClient::registerConfigScreen);
+        FogOverrides.clientInit();
+        FogOverridesForgeClient.registerConfigScreen();
     }
 
     public static void registerConfigScreen() {

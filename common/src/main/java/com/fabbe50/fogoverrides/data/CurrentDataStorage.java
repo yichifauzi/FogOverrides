@@ -2,10 +2,12 @@ package com.fabbe50.fogoverrides.data;
 
 import com.fabbe50.fogoverrides.ModConfig;
 import com.fabbe50.fogoverrides.Utilities;
+import dev.architectury.registry.level.biome.BiomeModifications;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class CurrentDataStorage {
     public static CurrentDataStorage INSTANCE = new CurrentDataStorage();
@@ -65,11 +67,11 @@ public class CurrentDataStorage {
         if (dimension == null) {
             return Utilities.getDefaultFogData();
         }
-        if (dimension.equals(Utilities.OVERWORLD)) {
+        if (dimension.equals(Utilities.getOverworld())) {
             return isOnFogOverridesEnabledServer && !integratedServer ? overworldFogData : ModConfig.overworldFogData;
-        } else if (dimension.equals(Utilities.THE_NETHER)) {
+        } else if (dimension.equals(Utilities.getNether())) {
             return isOnFogOverridesEnabledServer && !integratedServer ? netherFogData : ModConfig.netherFogData;
-        } else if (dimension.equals(Utilities.THE_END)) {
+        } else if (dimension.equals(Utilities.getTheEnd())) {
             return isOnFogOverridesEnabledServer && !integratedServer ? theEndFogData : ModConfig.theEndFogData;
         }
         return Utilities.getDefaultFogData();
@@ -153,6 +155,13 @@ public class CurrentDataStorage {
 
     public void addToBiomeStorage(ResourceLocation location, ModFogData fogData) {
         biomeStorage.put(location, fogData);
+    }
+
+    public void refreshWaterColor(ResourceLocation location, ModFogData fogData) {
+        BiomeModifications.replaceProperties(biomeContext -> {
+            Optional<ResourceLocation> optionalBiomeLocation = biomeContext.getKey();
+            return optionalBiomeLocation.map(resourceLocation -> resourceLocation.equals(location)).orElse(false);
+        }, (biomeContext, mutable) -> mutable.getEffectsProperties().setWaterColor(fogData.getWaterColor()));
     }
 
     public Map<ResourceLocation, ModFogData> getBiomeStorage() {

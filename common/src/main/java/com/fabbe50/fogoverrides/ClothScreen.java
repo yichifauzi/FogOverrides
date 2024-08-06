@@ -141,11 +141,11 @@ public class ClothScreen {
         creativeCategory.addAll(List.of(creativeHasModFog, creativeFogStartDistance, creativeFogEndDistance, creativeWaterFogStartDistance, creativeWaterFogEndDistance, creativeLavaFogStartDistance, creativeLavaFogEndDistance));
         general.addEntry(creativeCategory.build());
 
-        SubCategoryBuilder overworldSubCat = createModFogDataSubCat(entryBuilder, Utilities.OVERWORLD, ModConfig.overworldFogData);
+        SubCategoryBuilder overworldSubCat = createModFogDataSubCat(entryBuilder, Utilities.getOverworld(), ModConfig.overworldFogData, false);
         general.addEntry(overworldSubCat.build());
-        SubCategoryBuilder netherSubCat = createModFogDataSubCat(entryBuilder, Utilities.THE_NETHER, ModConfig.netherFogData);
+        SubCategoryBuilder netherSubCat = createModFogDataSubCat(entryBuilder, Utilities.getNether(), ModConfig.netherFogData, false);
         general.addEntry(netherSubCat.build());
-        SubCategoryBuilder theEndSubCat = createModFogDataSubCat(entryBuilder, Utilities.THE_END, ModConfig.theEndFogData);
+        SubCategoryBuilder theEndSubCat = createModFogDataSubCat(entryBuilder, Utilities.getTheEnd(), ModConfig.theEndFogData, false);
         general.addEntry(theEndSubCat.build());
 
         IntegerSliderEntry cloudHeight = entryBuilder.startIntSlider(Component.translatable("text.fogoverrides.option.cloud_height"), ModConfig.cloudHeight, -64, 319)
@@ -185,7 +185,7 @@ public class ClothScreen {
         Map<ResourceLocation, ModFogData> biomes = ModConfig.getBiomeStorage();
         for (ResourceLocation location : biomes.keySet()) {
             ModFogData fogData = biomes.get(location);
-            SubCategoryBuilder biomeSubCategory = createModFogDataSubCat(entryBuilder, location, fogData);
+            SubCategoryBuilder biomeSubCategory = createModFogDataSubCat(entryBuilder, location, fogData, true);
             biomeSettings.addEntry(biomeSubCategory.build());
         }
 
@@ -199,7 +199,7 @@ public class ClothScreen {
         }).build();
     }
 
-    private static SubCategoryBuilder createModFogDataSubCat(ConfigEntryBuilder entryBuilder, ResourceLocation location, ModFogData fogData) {
+    private static SubCategoryBuilder createModFogDataSubCat(ConfigEntryBuilder entryBuilder, ResourceLocation location, ModFogData fogData, boolean hasWaterColorSettings) {
         ModFogData defaultFog = Utilities.getDefaultFogData();
         SubCategoryBuilder modFogSubcategory = entryBuilder.startSubCategory(Component.literal(Utilities.capitalizeFirstInEveryWord(location.getPath().replace("_", " "))));
         BooleanListEntry overrideFog = entryBuilder.startBooleanToggle(Component.translatable("text.fogoverrides.option.override_fog"), fogData.isOverrideGameFog())
@@ -289,17 +289,21 @@ public class ClothScreen {
         waterPotionFogStartDistance.requestReferenceRebuilding();
         waterPotionFogEndDistance.setErrorSupplier(() -> waterPotionFogStartDistance.getValue() >= waterPotionFogEndDistance.getValue() ? Optional.of(Component.translatable("text.fogoverrides.error.fog_distance")) : Optional.empty());
         waterPotionFogEndDistance.requestReferenceRebuilding();
-        BooleanListEntry overrideWaterColor = entryBuilder.startBooleanToggle(Component.translatable("text.fogoverrides.option.override_water_color"), fogData.isOverrideWaterColor())
-                .setDefaultValue(defaultFog.isOverrideWaterColor())
-                .setTooltip(Component.translatable("text.fogoverrides.option.override_water_color.tooltip"))
-                .setYesNoTextSupplier(aBoolean -> Component.translatable("text.fogoverrides.setting" + (aBoolean ? ".enabled" : ".disabled")).withStyle(aBoolean ? ChatFormatting.GREEN : ChatFormatting.RED))
-                .setSaveConsumer(fogData::setOverrideWaterColor)
-                .build();
-        ColorEntry waterColor = entryBuilder.startColorField(Component.translatable("text.fogoverrides.option.water_color"), fogData.getWaterColor())
-                .setDefaultValue(defaultFog.getWaterColor())
-                .setTooltip(Component.translatable("text.fogoverrides.option.water_color.tooltip"), Component.translatable("text.fogoverrides.requires_reloading_world.tooltip").withStyle(ChatFormatting.RED))
-                .setSaveConsumer(fogData::setWaterColor)
-                .build();
+        BooleanListEntry overrideWaterColor = null;
+        ColorEntry waterColor = null;
+        if (hasWaterColorSettings) {
+            overrideWaterColor = entryBuilder.startBooleanToggle(Component.translatable("text.fogoverrides.option.override_water_color"), fogData.isOverrideWaterColor())
+                    .setDefaultValue(defaultFog.isOverrideWaterColor())
+                    .setTooltip(Component.translatable("text.fogoverrides.feature.experimental").withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), Component.translatable("text.fogoverrides.option.override_water_color.tooltip"), Component.translatable("text.fogoverrides.requires_reloading_world.tooltip").withStyle(ChatFormatting.RED))
+                    .setYesNoTextSupplier(aBoolean -> Component.translatable("text.fogoverrides.setting" + (aBoolean ? ".enabled" : ".disabled")).withStyle(aBoolean ? ChatFormatting.GREEN : ChatFormatting.RED))
+                    .setSaveConsumer(fogData::setOverrideWaterColor)
+                    .build();
+            waterColor = entryBuilder.startColorField(Component.translatable("text.fogoverrides.option.water_color"), fogData.getWaterColor())
+                    .setDefaultValue(defaultFog.getWaterColor())
+                    .setTooltip(Component.translatable("text.fogoverrides.feature.experimental").withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), Component.translatable("text.fogoverrides.option.water_color.tooltip"), Component.translatable("text.fogoverrides.requires_reloading_world.tooltip").withStyle(ChatFormatting.RED))
+                    .setSaveConsumer(fogData::setWaterColor)
+                    .build();
+        }
         BooleanListEntry overrideWaterFogColor = entryBuilder.startBooleanToggle(Component.translatable("text.fogoverrides.option.override_water_fog_color"), fogData.isOverrideWaterFogColor())
                 .setDefaultValue(defaultFog.isOverrideWaterFogColor())
                 .setTooltip(Component.translatable("text.fogoverrides.option.override_water_fog_color.tooltip"))
@@ -351,7 +355,11 @@ public class ClothScreen {
         lavaPotionFogEndDistance.setErrorSupplier(() -> lavaPotionFogStartDistance.getValue() >= lavaPotionFogEndDistance.getValue() ? Optional.of(Component.translatable("text.fogoverrides.error.fog_distance")) : Optional.empty());
         lavaPotionFogEndDistance.requestReferenceRebuilding();
 
-        waterSettings.addAll(List.of(overrideWaterFog, waterFogStartDistance, waterFogEndDistance, waterPotionEffect, waterPotionFogStartDistance, waterPotionFogEndDistance, overrideWaterColor, waterColor, overrideWaterFogColor, waterFogColor));
+        if (overrideWaterColor != null) {
+            waterSettings.addAll(List.of(overrideWaterFog, waterFogStartDistance, waterFogEndDistance, waterPotionEffect, waterPotionFogStartDistance, waterPotionFogEndDistance, overrideWaterColor, waterColor, overrideWaterFogColor, waterFogColor));
+        } else {
+            waterSettings.addAll(List.of(overrideWaterFog, waterFogStartDistance, waterFogEndDistance, waterPotionEffect, waterPotionFogStartDistance, waterPotionFogEndDistance, overrideWaterFogColor, waterFogColor));
+        }
         lavaSettings.addAll(List.of(overrideLavaFog, lavaFogStartDistance, lavaFogEndDistance, lavaPotionEffect, lavaPotionFogStartDistance, lavaPotionFogEndDistance));
         modFogSubcategory.addAll(List.of(overrideFog, fogEnabled, fogStartDistance, fogEndDistance, overrideSkyColor, skyColor, overrideFogColor, fogColor, waterSettings.build(), lavaSettings.build()));
         return modFogSubcategory;

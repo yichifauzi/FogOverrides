@@ -17,12 +17,25 @@ import java.io.FileOutputStream;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Utilities {
-    public static final ResourceLocation OVERWORLD = Level.OVERWORLD.location();
-    public static final ResourceLocation THE_NETHER = Level.NETHER.location();
-    public static final ResourceLocation THE_END = Level.END.location();
+    private static final ResourceLocation OVERWORLD = Level.OVERWORLD.location();
+    private static final ResourceLocation THE_NETHER = Level.NETHER.location();
+    private static final ResourceLocation THE_END = Level.END.location();
+
+    public static ResourceLocation getOverworld() {
+        return Objects.requireNonNullElseGet(OVERWORLD, () -> new ResourceLocation("overworld"));
+    }
+
+    public static ResourceLocation getNether() {
+        return Objects.requireNonNullElseGet(THE_NETHER, () -> new ResourceLocation("the_nether"));
+    }
+
+    public static ResourceLocation getTheEnd() {
+        return Objects.requireNonNullElseGet(THE_END, () -> new ResourceLocation("the_end"));
+    }
 
     public static int getColorIntegerFromRGB(int[] rgb) {
         return getColorIntegerFromRGB(rgb[0], rgb[1], rgb[2]);
@@ -104,9 +117,12 @@ public class Utilities {
         Biome biome = getCurrentBiome();
         if (biome != null) {
             ModFogData data = CurrentDataStorage.INSTANCE.getBiomeFogData(Utilities.getCurrentBiomeLocation());
-            if (data != null && data.getSkyColor() != -1) {
-                if (data.isOverrideSkyColor()) {
-                    return data.getSkyColor();
+            if (data != null && data.isOverrideSkyColor() && data.getSkyColor() != -1) {
+                return data.getSkyColor();
+            } else {
+                ModFogData dimensionData = CurrentDataStorage.INSTANCE.getFogDataFromDimension(Utilities.getCurrentDimensionLocation());
+                if (dimensionData != null && dimensionData.getSkyColor() != -1 && dimensionData.isOverrideSkyColor()) {
+                    return dimensionData.getSkyColor();
                 }
             }
             return biome.getSpecialEffects().getSkyColor();
@@ -118,9 +134,12 @@ public class Utilities {
         Biome biome = getCurrentBiome();
         if (biome != null) {
             ModFogData data = CurrentDataStorage.INSTANCE.getBiomeFogData(Utilities.getCurrentBiomeLocation());
-            if (data != null && data.getFogColor() != -1) {
-                if (data.isOverrideFogColor()) {
-                    return data.getFogColor();
+            if (data != null && data.isOverrideFogColor() && data.getFogColor() != -1) {
+                return data.getFogColor();
+            } else {
+                ModFogData dimensionData = CurrentDataStorage.INSTANCE.getFogDataFromDimension(Utilities.getCurrentDimensionLocation());
+                if (dimensionData != null && dimensionData.getFogColor() != -1 && dimensionData.isOverrideFogColor()) {
+                    return dimensionData.getFogColor();
                 }
             }
             return biome.getSpecialEffects().getFogColor();
@@ -163,9 +182,12 @@ public class Utilities {
         Biome biome = getCurrentBiome();
         if (biome != null) {
             ModFogData data = CurrentDataStorage.INSTANCE.getBiomeFogData(Utilities.getCurrentBiomeLocation());
-            if (data != null && data.getWaterFogColor() != -1) {
-                if (data.isOverrideWaterFogColor()) {
-                    return data.getWaterFogColor();
+            if (data != null && data.isOverrideWaterFogColor() && data.getWaterFogColor() != -1) {
+                return data.getWaterFogColor();
+            } else {
+                ModFogData dimensionData = CurrentDataStorage.INSTANCE.getFogDataFromDimension(Utilities.getCurrentDimensionLocation());
+                if (dimensionData != null && dimensionData.getWaterFogColor() != -1 && dimensionData.isOverrideWaterFog()) {
+                    return dimensionData.getWaterFogColor();
                 }
             }
             return biome.getSpecialEffects().getWaterFogColor();

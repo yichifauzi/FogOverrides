@@ -1,6 +1,7 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.4-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
+    id "io.github.pacifistmc.forgix" version "1.2.9"
 }
 
 architectury {
@@ -52,5 +53,29 @@ allprojects {
 
     java {
         withSourcesJar()
+    }
+
+    forgix {
+        group = "com.fabbe50.fogoverrides"
+        mergedJarName = "${archivesBaseName}-${mod_version}.jar"
+
+        forge {
+            projectName = "forge"
+            jarLocation = "build/libs/${archivesBaseName}-${mod_version}.jar"
+            mixin "fogoverrides.mixins.json"
+            mixin "fogoverrides-common.mixins.json"
+        }
+
+        fabric {
+            projectName = "fabric"
+            jarLocation = "build/libs/${archivesBaseName}-${mod_version}.jar"
+        }
+
+        /*neoforge {
+            projectName = "neoforge"
+            jarLocation = "build/libs/${archivesBaseName}-${mod_version}.jar"
+            mixin "fogoverrides.mixins.json"
+            mixin "fogoverrides-common.mixins.json"
+        }*/
     }
 }

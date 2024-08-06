@@ -56,6 +56,10 @@ public abstract class MixinLevelRenderer {
 
     @Inject(at = @At(value = "HEAD"), method = "renderClouds", cancellable = true)
     private void injectRenderClouds(PoseStack poseStack, Matrix4f matrix4f, float f, double d, double e, double g, CallbackInfo ci) {
+        if (level != null && Float.isNaN(level.effects().getCloudHeight())) {
+            ci.cancel();
+            return;
+        }
         float cloudHeight = CurrentDataStorage.INSTANCE.getCloudHeight();
         RenderSystem.disableCull();
         RenderSystem.enableBlend();

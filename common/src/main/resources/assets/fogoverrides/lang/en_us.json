@@ -101,5 +101,6 @@
   "text.fogoverrides.key.open_menu": "Open Config Keybinding",
   "text.fogoverrides.key.open_menu.tooltip": "Choose a keybinding to open the Fog Overrides config screen while in game.",
   "text.fogoverrides.keybinds": "Fog Overrides Keybinds",
-  "text.fogoverrides.keybinds.open_menu": "Open Fog Overrides Config Menu"
+  "text.fogoverrides.keybinds.open_menu": "Open Fog Overrides Config Menu",
+  "text.fogoverrides.feature.experimental": "[EXPERIMENTAL]"
 }
